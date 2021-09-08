@@ -14,16 +14,25 @@ class _CartItemState extends State<CartItem> {
   Widget build(BuildContext context) {
     final meal = Provider.of<Itemdata>(context);
 
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundImage: NetworkImage(meal.image),
-      ),
-      title: Text(meal.title),
-      subtitle: Text('${meal.price}'),
-      trailing: IconButton(
-        onPressed: () => Provider.of<Items>(context).removecart(meal.id),
-        icon: Icon(Icons.delete),
-      ),
+    return Column(
+      children: [
+        ListTile(
+          leading: CircleAvatar(
+            radius: 50,
+            backgroundImage: NetworkImage(meal.image),
+          ),
+          title: Text(meal.title),
+          subtitle: Text('${meal.price}'),
+          trailing: IconButton(
+            onPressed: () =>
+                Provider.of<Items>(context, listen: false).removecart(meal.id),
+            icon: Icon(
+              Icons.delete,
+              color: Colors.red,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

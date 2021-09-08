@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import 'package:shoppingcart/util/database_ref.dart';
 
 class Itemdata with ChangeNotifier {
-  final String id, title, description, image;
+  final String title, description, image;
   final double price;
+  final int id;
   bool isFavorite, cart;
 
   Itemdata(
@@ -16,63 +18,102 @@ class Itemdata with ChangeNotifier {
 }
 
 class Items with ChangeNotifier {
-  final List<Itemdata> _items = [
-    Itemdata(
-        id: '1',
-        price: 25,
-        title: 'title1',
-        description: 'description',
-        image: 'https://ahmed525-12.github.io/Construction/img/work1.jpg'),
-    Itemdata(
-        id: '2',
-        price: 40,
-        title: 'title2',
-        description: 'description2',
-        image: 'https://ahmed525-12.github.io/Construction/img/work3.jpeg'),
-  ];
-  final List<Itemdata> _favoriteMeals = [];
+  final List<Itemdata> _items = [];
   List<Itemdata> get items => [..._items];
-  List<Itemdata> get favoriteMeals => [..._favoriteMeals];
-  void removeItem(String id) {
+///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+  Future<void> getData() async {
+    List<Map<String, dynamic>> data =
+        await database_ref!.rawQuery('select * from items');
+
+    _items.clear();
+    data.forEach((element) {
+      _items.add(Itemdata(
+          id: element['id'],
+          price: element['price'],
+          title: element['title'],
+          description: element['description'],
+          image: element['image']));
+    });
+  }
+
+///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+  Future<void> removeItem(int id) async {
+    await database_ref!.rawDelete('DELETE FROM items WHERE id = $id');
     _items.removeWhere((item) => item.id == id);
     notifyListeners();
   }
 
-  void addItem(
-      String id, String title, String description, double price, String image) {
-    _items.add(Itemdata(
-        id: id,
-        price: price,
-        title: title,
-        description: description,
-        image: image));
+  Future<void> addItem(
+    String title,
+    String description,
+    double price,
+    String image,
+  ) async {
+    int? id;
+    await database_ref!.transaction((txn) async {
+      id = await txn.rawInsert(
+          'insert into items(title,description,price,image) values("$title","$description","$price","$image") ');
+      print(id);
+    });
+    // _items.add(Itemdata(
+    //     id: '${_items.length + 1}',
+    //     price: price,
+    //     title: title,
+    //     description: description,
+    //     image: image));
     notifyListeners();
   }
 
-  void removeFavitem(String id) {
+  ///// eidt item
+  Itemdata findById(int id) {
+    return _items.firstWhere((element) => element.id == id);
+  }
+
+  Future<void> editItem(int id, String title, String description, String image,
+      double price) async {
+    await database_ref!.rawUpdate(
+        'UPDATE items SET title = "$title",description="$description",image="$image",price="$price" WHERE id = $id');
+    // _items.add(Itemdata(
+    //     id: id,
+    //     price: price,
+    //     title: title,
+    //     description: description,
+    //     image: image));
+    notifyListeners();
+  }
+
+//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////// FAV/////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+  final List<Itemdata> _favoriteMeals = [];
+  List<Itemdata> get favoriteMeals => [..._favoriteMeals];
+  void removeFavitem(int id) {
     _favoriteMeals.removeWhere((element) => element.id == id);
     notifyListeners();
   }
 
-  void addFavItem(String id) {
+  void addFavItem(int id) {
     _favoriteMeals.add(_items.firstWhere((element) => element.id == id));
     notifyListeners();
   }
+//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////// cart/////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 
   final List<Itemdata> _cart = [];
   List<Itemdata> get cart => [..._cart];
   var cartcount = 0;
-  void addCart(String id) {
+  void addCart(int id) {
     _cart.add(_items.firstWhere((element) => element.id == id));
     notifyListeners();
   }
 
-  void removecart(String id) {
+  void removecart(int id) {
     _cart.removeWhere((element) => element.id == id);
     notifyListeners();
   }
 }
-
-
 
 // solidpernsopal important

@@ -84,7 +84,9 @@ class ShowITem extends StatelessWidget {
                                     .addCart(meal.id);
                               }
                               for (var i = 0;
-                                  i < Provider.of<Items>(context).cartcount;
+                                  i <
+                                      Provider.of<Items>(context, listen: false)
+                                          .cartcount;
                                   i++) {
                                 Provider.of<Items>(context).cartcount++;
                               }

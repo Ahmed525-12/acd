@@ -50,7 +50,7 @@ class DrawrWidget extends StatelessWidget {
             height: 0,
           ),
           ListTile(
-            onTap: () => Navigator.pushNamed(context, ''),
+            onTap: () => Navigator.pushNamed(context, 'order'),
             title: Row(
               children: [
                 Icon(Icons.archive),

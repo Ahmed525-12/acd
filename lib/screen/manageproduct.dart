@@ -1,3 +1,5 @@
+// ManageProduct
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../model/itemdata.dart';
@@ -11,19 +13,21 @@ class ManageProduct extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = Provider.of<Items>(context).items;
-
+    final _items = Provider.of<Items>(context).items;
     return Scaffold(
       appBar: AppBar(
-        title: Text('manage Product'),
+        title: Text('Order'),
+        actions: [
+          IconButton(
+              onPressed: () => Navigator.pushNamed(context, 'addItems'),
+              icon: Icon(Icons.add_circle))
+        ],
       ),
       drawer: DrawrWidget(),
       body: ListView.builder(
-        itemCount: items.length,
-        itemBuilder: (context, index) => ChangeNotifierProvider.value(
-          value: items[index],
-          child: ShowManageOrder(),
-        ),
+        itemCount: _items.length,
+        itemBuilder: (_, i) => ChangeNotifierProvider.value(
+            value: _items[i], child: ShowManageOrder()),
       ),
     );
   }

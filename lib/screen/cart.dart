@@ -15,28 +15,10 @@ class Cart extends StatelessWidget {
         title: Text('cart'),
       ),
       drawer: DrawrWidget(),
-      body: Column(
-        children: [
-//there a erorr IDK what he is
-
-          // Card(
-          //   child: ListTile(
-          //     leading: Text('Total'),
-          //     trailing: Row(
-          //       children: [
-          //         Text(
-          //             '${Provider.of<Itemdata>(context).price * Provider.of<Items>(context).cartcount}'),
-          //         TextButton(onPressed: () {}, child: Text('ORDER NOW'))
-          //       ],
-          //     ),
-          //   ),
-          // ),
-          ListView.builder(
-            itemCount: _items.length,
-            itemBuilder: (_, i) => ChangeNotifierProvider.value(
-                value: _items[i], child: CartItem()),
-          ),
-        ],
+      body: ListView.builder(
+        itemCount: _items.length,
+        itemBuilder: (_, i) =>
+            ChangeNotifierProvider.value(value: _items[i], child: CartItem()),
       ),
     );
   }
