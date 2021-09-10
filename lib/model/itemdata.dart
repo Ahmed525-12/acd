@@ -24,13 +24,15 @@ class Items with ChangeNotifier {
 //////////////////////////////////////////////////////////////////////////
   Future<void> getData() async {
     List<Map<String, dynamic>> data =
-        await database_ref!.rawQuery('select * from items');
+        await database_ref!.rawQuery('select * from items ');
 
     _items.clear();
+    print("gggggggggggggggggggggggggggggggggggg $data");
     data.forEach((element) {
+      print("gggggggggggggggggggggggggggggggggggg $element");
       _items.add(Itemdata(
           id: element['id'],
-          price: element['price'],
+          price: double.parse("${element['price']}"),
           title: element['title'],
           description: element['description'],
           image: element['image']));
@@ -54,15 +56,10 @@ class Items with ChangeNotifier {
     int? id;
     await database_ref!.transaction((txn) async {
       id = await txn.rawInsert(
-          'insert into items(title,description,price,image) values("$title","$description","$price","$image") ');
+          'INSERT INTO items(title,description,image,price) VALUES("$title","$description","$image","$price")');
       print(id);
     });
-    // _items.add(Itemdata(
-    //     id: '${_items.length + 1}',
-    //     price: price,
-    //     title: title,
-    //     description: description,
-    //     image: image));
+
     notifyListeners();
   }
 

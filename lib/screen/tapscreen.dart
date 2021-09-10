@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shoppingcart/model/itemdata.dart';
 import './home_screen.dart';
 import './favorite.dart';
 import '../widget/darwer.dart';
@@ -49,7 +51,17 @@ class _TapScreenState extends State<TapScreen> {
         ],
       ),
       drawer: DrawrWidget(),
-      body: _pages[_currentIndex]['page'],
+      body: FutureBuilder(
+        future: Provider.of<Items>(context).getData(),
+        builder: (_, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return _pages[_currentIndex]['page'];
+          }
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _changeindex,

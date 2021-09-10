@@ -6,7 +6,7 @@ Future<void> openDb() async {
   database_ref =
       await openDatabase('items.db', version: 1, onCreate: (db, version) async {
     await db.execute(
-        'create table items (id integer primary key, title text,description text , image text,price integer,isFavorite integer , cart integer )');
+        'create table items (id INTEGER primary key, title TEXT,description TEXT , image TEXT,price TEXT )');
     print('db created');
   }, onOpen: (db) {
     print('db opend');
