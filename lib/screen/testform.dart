@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../model/itemdata.dart';
 
-class AddItems extends StatefulWidget {
-  const AddItems({Key? key}) : super(key: key);
+class FirstTestForm extends StatefulWidget {
+  const FirstTestForm({Key? key}) : super(key: key);
 
   @override
-  _AddItemsState createState() => _AddItemsState();
+  _FirstTestFormState createState() => _FirstTestFormState();
 }
 
-class _AddItemsState extends State<AddItems> {
+class _FirstTestFormState extends State<FirstTestForm> {
   bool _isFrist = true;
   Itemdata? itemdata;
   var arg;
@@ -95,7 +94,8 @@ class _AddItemsState extends State<AddItems> {
                           _titlecontrelar.text,
                           _discreptioncontrelar.text,
                           double.parse(_pricecontrelar.text),
-                          _imgurlcontrelar.text)
+                          _imgurlcontrelar.text,
+                        )
                       : Provider.of<Items>(context, listen: false).editItem(
                           arg['id'],
                           _titlecontrelar.text,

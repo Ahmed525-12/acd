@@ -1,48 +1,87 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
-import 'package:shoppingcart/util/database_ref.dart';
+import 'package:http/http.dart';
+import 'package:shoppingcart/util/constans.dart';
 
 class Itemdata with ChangeNotifier {
-  final String title, description, image;
-  final double price;
-  final int id;
-  bool isFavorite, cart;
+  String title, description, image, id;
+  double price;
 
-  Itemdata(
-      {required this.id,
-      required this.price,
-      required this.title,
-      required this.description,
-      required this.image,
-      this.isFavorite = false,
-      this.cart = false});
+  bool isFavorite;
+
+  Itemdata({
+    required this.id,
+    required this.price,
+    required this.title,
+    required this.description,
+    required this.image,
+    this.isFavorite = false,
+  });
+  List spilitString() {
+    return title.split(' ');
+  }
+
+  Future<void> toggleFav() async {
+    String uri = '$url/products/$id.json';
+    await patch(
+      Uri.parse(uri),
+      body: json.encode({
+        'isFavorite': !isFavorite,
+      }),
+    );
+    isFavorite = !isFavorite;
+    notifyListeners();
+  }
 }
 
 class Items with ChangeNotifier {
-  final List<Itemdata> _items = [];
+  final String? _uid;
+  final String? _token;
+
+  Items({
+    String? uid,
+    String? token,
+    List<Itemdata>? items,
+  })  : _uid = uid,
+        _token = token,
+        _items = items ?? [];
+
+  List<Itemdata> _items = [];
   List<Itemdata> get items => [..._items];
+
 ///////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
   Future<void> getData() async {
-    List<Map<String, dynamic>> data =
-        await database_ref!.rawQuery('select * from items ');
-
+    String uri = '$url/products.json?auth=$_token';
+    var response = await get(Uri.parse(uri));
+    Map<String, dynamic>? extractedData = json.decode(response.body);
+    if (extractedData == null) {
+      return null;
+    }
     _items.clear();
-    print("gggggggggggggggggggggggggggggggggggg $data");
-    data.forEach((element) {
-      print("gggggggggggggggggggggggggggggggggggg $element");
-      _items.add(Itemdata(
-          id: element['id'],
-          price: double.parse("${element['price']}"),
-          title: element['title'],
-          description: element['description'],
-          image: element['image']));
-    });
+    extractedData.forEach(
+      (id, data) {
+        _items.add(
+          Itemdata(
+            id: id,
+            title: data['title'],
+            description: data['description'],
+            image: data['image'],
+            price: double.parse(data['price']),
+            isFavorite: data['isFavorite'],
+          ),
+        );
+      },
+    );
   }
 
 ///////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-  Future<void> removeItem(int id) async {
-    await database_ref!.rawDelete('DELETE FROM items WHERE id = $id');
+  Future<void> removeItem(String id) async {
+    String uri = '$url/products/$id.json?auth=$_token';
+    await delete(Uri.parse(uri));
+
     _items.removeWhere((item) => item.id == id);
     notifyListeners();
   }
@@ -53,64 +92,73 @@ class Items with ChangeNotifier {
     double price,
     String image,
   ) async {
-    int? id;
-    await database_ref!.transaction((txn) async {
-      id = await txn.rawInsert(
-          'INSERT INTO items(title,description,image,price) VALUES("$title","$description","$image","$price")');
-      print(id);
-    });
+    String uri = '$url/products.json?auth=$_token';
+//post requset api
+    var response = await post(
+      Uri.parse(uri),
+      body: json.encode({
+        'title': title,
+        'description': description,
+        'price': price.toString(),
+        'image': image,
+        'isFavorite': false
+      }),
+    );
+
+    _items.add(
+      Itemdata(
+          id: json.decode(response.body)['name'],
+          price: price,
+          title: title,
+          description: description,
+          image: image,
+          isFavorite: false),
+    );
 
     notifyListeners();
   }
 
   ///// eidt item
-  Itemdata findById(int id) {
+  Itemdata findById(String id) {
     return _items.firstWhere((element) => element.id == id);
   }
 
-  Future<void> editItem(int id, String title, String description, String image,
-      double price) async {
-    await database_ref!.rawUpdate(
-        'UPDATE items SET title = "$title",description="$description",image="$image",price="$price" WHERE id = $id');
-    // _items.add(Itemdata(
-    //     id: id,
-    //     price: price,
-    //     title: title,
-    //     description: description,
-    //     image: image));
+  Future<void> editItem(String id, String title, String description,
+      String image, double price) async {
+    String uri = '$url/products/$id.json?auth=$_token';
+    await put(
+      Uri.parse(uri),
+      body: json.encode({
+        'title': title,
+        'description': description,
+        'price': price.toString(),
+        'image': image,
+        'isFavorite': false
+      }),
+    );
+
+    int updatedindex = _items.indexWhere((element) => element.id == id);
+    _items[updatedindex].title = title;
+    _items[updatedindex].price = price;
+    _items[updatedindex].description = description;
+    _items[updatedindex].image = image;
+    _items[updatedindex].isFavorite = false;
+
     notifyListeners();
   }
 
 //////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////// FAV/////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-  final List<Itemdata> _favoriteMeals = [];
-  List<Itemdata> get favoriteMeals => [..._favoriteMeals];
-  void removeFavitem(int id) {
-    _favoriteMeals.removeWhere((element) => element.id == id);
-    notifyListeners();
-  }
+  List<Itemdata> get favProds =>
+      _items.where((element) => element.isFavorite).toList();
 
-  void addFavItem(int id) {
-    _favoriteMeals.add(_items.firstWhere((element) => element.id == id));
+  Future<void> toggleFav(String id) async {
+    await _items.firstWhere((element) => element.id == id).toggleFav();
     notifyListeners();
   }
 //////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////// cart/////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-  final List<Itemdata> _cart = [];
-  List<Itemdata> get cart => [..._cart];
-  var cartcount = 0;
-  void addCart(int id) {
-    _cart.add(_items.firstWhere((element) => element.id == id));
-    notifyListeners();
-  }
-
-  void removecart(int id) {
-    _cart.removeWhere((element) => element.id == id);
-    notifyListeners();
-  }
 }
-
-// solidpernsopal important

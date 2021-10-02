@@ -16,11 +16,14 @@ class ManageProduct extends StatelessWidget {
     final _items = Provider.of<Items>(context).items;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Order'),
+        title: Text('Products'),
         actions: [
           IconButton(
-              onPressed: () => Navigator.pushNamed(context, 'addItems'),
-              icon: Icon(Icons.add_circle))
+              onPressed: () => Navigator.pushNamed(context, 'search'),
+              icon: Icon(Icons.search_rounded)),
+          IconButton(
+              onPressed: () => Navigator.pushNamed(context, 'additem'),
+              icon: Icon(Icons.add_circle)),
         ],
       ),
       drawer: DrawrWidget(),

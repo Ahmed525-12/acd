@@ -22,9 +22,12 @@ environment:
 
 dependencies:
   cupertino_icons: ^1.0.2
+  firebase_auth: ^3.1.1
+  firebase_core: ^1.6.0
   flutter:
     sdk: flutter
   google_fonts: ^2.1.0
+  http: ^0.13.3
   intl: ^0.17.0
   provider: ^6.0.0
   sqflite: ^2.0.0+4

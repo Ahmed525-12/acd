@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "395652830431",
+    "firebase_url": "https://testcuiq-default-rtdb.firebaseio.com",
+    "project_id": "testcuiq",
+    "storage_bucket": "testcuiq.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:395652830431:android:2951775c1b74432e0c056a",
+        "android_client_info": {
+          "package_name": "com.example.shoppingcart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "395652830431-hje5em38eqnv735ht9ijg25paos8c0pk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxoeLxGEOBrvhX_KKrr95iZ0E1Go2Q-pw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "395652830431-hje5em38eqnv735ht9ijg25paos8c0pk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

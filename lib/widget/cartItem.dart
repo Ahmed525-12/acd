@@ -1,38 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../model/itemdata.dart';
+import 'package:shoppingcart/model/cartdata.dart';
 
-class CartItem extends StatefulWidget {
-  const CartItem({Key? key}) : super(key: key);
+class CartItemWidget extends StatelessWidget {
+  final String id;
+  const CartItemWidget(this.id, {Key? key}) : super(key: key);
 
-  @override
-  _CartItemState createState() => _CartItemState();
-}
-
-class _CartItemState extends State<CartItem> {
   @override
   Widget build(BuildContext context) {
-    final meal = Provider.of<Itemdata>(context);
-
-    return Column(
-      children: [
-        ListTile(
-          leading: CircleAvatar(
-            radius: 50,
-            backgroundImage: NetworkImage(meal.image),
-          ),
-          title: Text(meal.title),
-          subtitle: Text('${meal.price}'),
-          trailing: IconButton(
-            onPressed: () =>
-                Provider.of<Items>(context, listen: false).removecart(meal.id),
-            icon: Icon(
-              Icons.delete,
-              color: Colors.red,
-            ),
-          ),
+    CartItem cartItem = Provider.of(context);
+    return Dismissible(
+      direction: DismissDirection.endToStart,
+      key: ValueKey(id),
+      onDismissed: (_) =>
+          Provider.of<CartIems>(context, listen: false).removecartItem(id),
+      background: Container(
+        alignment: Alignment.centerRight,
+        color: Colors.red,
+        child: const Icon(
+          Icons.delete,
+          color: Colors.white,
+          size: 30,
         ),
-      ],
+      ),
+      child: ListTile(
+          title: Text(cartItem.title),
+          subtitle: Text('${cartItem.price * cartItem.quantity}'),
+          trailing: Text('${cartItem.price.round()} X ${cartItem.quantity}')),
     );
   }
 }

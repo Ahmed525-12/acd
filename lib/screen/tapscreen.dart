@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shoppingcart/model/itemdata.dart';
+import 'package:shoppingcart/model/cartdata.dart';
+import 'package:shoppingcart/widget/badge.dart';
 import './home_screen.dart';
 import './favorite.dart';
 import '../widget/darwer.dart';
@@ -42,26 +43,36 @@ class _TapScreenState extends State<TapScreen> {
       appBar: AppBar(
         title: Text(_pages[_currentIndex]['title']),
         actions: [
-          IconButton(
-              onPressed: () => Navigator.pushNamed(context, 'cart'),
-              icon: Icon(
-                Icons.shopping_cart,
-                color: Colors.white,
-              )),
+          Badge(
+            child: IconButton(
+                onPressed: () {
+                  if (Provider.of<CartIems>(context, listen: false)
+                      .cartItems
+                      .isEmpty) {
+                    ScaffoldMessenger.of(context).showMaterialBanner(
+                      MaterialBanner(content: Text('ADD ITEMS !!'), actions: [
+                        TextButton(
+                            onPressed: () {
+                              ScaffoldMessenger.of(context)
+                                  .hideCurrentMaterialBanner();
+                            },
+                            child: Text('Ok'))
+                      ]),
+                    );
+                    return;
+                  }
+                  Navigator.pushNamed(context, 'cart');
+                },
+                icon: Icon(
+                  Icons.shopping_cart,
+                  color: Colors.white,
+                )),
+            value: Provider.of<CartIems>(context).itemscount.toString(),
+          )
         ],
       ),
       drawer: DrawrWidget(),
-      body: FutureBuilder(
-        future: Provider.of<Items>(context).getData(),
-        builder: (_, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return _pages[_currentIndex]['page'];
-          }
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-      ),
+      body: _pages[_currentIndex]['page'],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _changeindex,

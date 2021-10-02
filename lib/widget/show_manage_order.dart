@@ -27,7 +27,7 @@ class _ShowManageOrderState extends State<ShowManageOrder> {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                onPressed: () => Navigator.pushNamed(context, 'addItems',
+                onPressed: () => Navigator.pushNamed(context, 'additem',
                     arguments: {'id': meal.id}),
                 icon: Icon(
                   Icons.edit,

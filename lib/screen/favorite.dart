@@ -8,7 +8,7 @@ class FavoriteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _items = Provider.of<Items>(context).favoriteMeals;
+    List<Itemdata> _items = Provider.of<Items>(context).favProds;
     return ListView.builder(
       itemCount: _items.length,
       itemBuilder: (_, i) =>
