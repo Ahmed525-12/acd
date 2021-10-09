@@ -10,9 +10,8 @@ import 'package:shoppingcart/screen/cart.dart';
 import 'package:shoppingcart/screen/orders.dart';
 import 'package:shoppingcart/screen/search_screen.dart';
 import 'package:shoppingcart/screen/tapscreen.dart';
-import './screen/tapscreen.dart';
 import './screen/manageproduct.dart';
-import 'screen/add_item.dart';
+import './screen/add_item.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,16 +27,6 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(value: Auth()),
         ChangeNotifierProvider.value(value: CartIems()),
-        // ChangeNotifierProvider.value(value: Products()),
-        // ChangeNotifierProvider.value(value: Orders()),
-        // ChangeNotifierProxyProvider<Auth, Orders>(
-        //   create: (_) => Orders(),
-        //   update: (_, auth, oldOrders) => Orders(
-        //     uid: auth.uid,
-        //     token: auth.token,
-        //     orders: oldOrders?.orders,
-        //   ),
-        // ),
         ChangeNotifierProxyProvider<Auth, Items>(
           create: (_) => Items(),
           update: (_, auth, oldProducts) => Items(
@@ -55,27 +44,6 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ],
-      // providers: [
-      //   ChangeNotifierProvider(
-      //     create: (_) => CartIems(),
-      //   ),
-      //   ChangeNotifierProxyProvider<Auth, Orders>(
-      //     create: (_) => Orders(),
-      //     update: (_, auth, orders) => Orders(
-      //         uid: auth.uid, token: auth.token, orders: orders?.orders ?? []),
-      //   ),
-      //   ChangeNotifierProxyProvider<Auth, Items>(
-      //     create: (_) => Items(),
-      //     update: (_, auth, items) => Items(
-      //       uid: auth.uid,
-      //       token: auth.token,
-      //       items: items?.items ?? [],
-      //     ),
-      //   ),
-      //   ChangeNotifierProvider.value(
-      //     value: Auth(),
-      //   ),
-      // ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',

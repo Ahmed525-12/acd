@@ -129,41 +129,24 @@ class _AuthCardState extends State<AuthCard> {
     setState(() {
       _isLoading = true;
     });
-    if (_authMode == AuthMode.signup) {
-      await Provider.of<Auth>(context, listen: false)
-          .signUp(_authData['email']!, _authData['password']!);
-    } else {
-      await Provider.of<Auth>(context, listen: false)
-          .logIn(_authData['email']!, _authData['password']!);
-    }
-    Navigator.pushNamed(context, 'tabscreen');
 
-    // if (_authMode == AuthMode.signup) {
-    //   await Provider.of<Auth>(context, listen: false)
-    //       .signUp(_authData['email']!, _authData['password']!);
-    // } else {
-    //   await Provider.of<Auth>(context, listen: false)
-    //       .logIn(_authData['email']!, _authData['password']!);
-    // }
-    // try {
-    //   if (_authMode == AuthMode.login) {
-    //     // Log user in
-    //     await Provider.of<Auth>(context, listen: false).logIn(
-    //       _authData['email'],
-    //       _authData['password'],
-    //     );
-    //   } else {
-    //     // Sign user up
-    //     await Provider.of<Auth>(context, listen: false).signUp(
-    //       _authData['email'],
-    //       _authData['password'],
-    //     );
-    //   }
-    // } catch (error) {
-    //   const errorMessage =
-    //       'Could not authenticate you. Please try again later.';
-    //   _showErrorDialog(errorMessage);
-    // }
+    try {
+      if (_authMode == AuthMode.signup) {
+        await Provider.of<Auth>(context, listen: false).signUp(
+          _authData['email']!,
+          _authData['password']!,
+        );
+      } else {
+        await Provider.of<Auth>(context, listen: false).logIn(
+          _authData['email']!,
+          _authData['password']!,
+        );
+      }
+      Navigator.pushNamed(context, 'tabscreen');
+    } catch (error) {
+      _showErrorDialog(error.toString());
+    }
+
     setState(() {
       _isLoading = false;
     });

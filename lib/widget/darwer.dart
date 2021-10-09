@@ -99,7 +99,7 @@ class DrawrWidget extends StatelessWidget {
           ListTile(
             onTap: () {
               Navigator.pushNamed(context, '/');
-              Provider.of<Auth>(context, listen: false).logOut();
+              Provider.of<Auth>(context, listen: false).logout();
             },
             title: Row(
               children: [

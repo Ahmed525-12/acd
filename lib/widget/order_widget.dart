@@ -15,8 +15,8 @@ class _OrderWidgetState extends State<OrderWidget> {
   Widget build(BuildContext context) {
     Order _order = Provider.of<Order>(context);
     return ExpansionTile(
-      title: Text('${_order.totalprice}'),
-      subtitle: Text(DateFormat.yMMMd().format(_order.dateTime)),
+      title: Text('${_order.totalPrice}'),
+      subtitle: Text(DateFormat.yMMMd().format(_order.date)),
       children: _order.prods
           .map((e) => ListTile(
                 title: Text(e.title),

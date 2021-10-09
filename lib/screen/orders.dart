@@ -47,7 +47,7 @@ class OrderScreen extends StatelessWidget {
                           children: [
                             Text('Total'),
                             Text(
-                                '${Provider.of<Orders>(context, listen: false).totalprice}')
+                                '${Provider.of<Orders>(context, listen: false).totalPrice}')
                           ],
                         ),
                       ),

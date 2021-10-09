@@ -56,9 +56,8 @@ class Items with ChangeNotifier {
 
   Future<void> getData() async {
     String uri = '$url/products/$_uid.json?auth=$_token';
-    print(uri);
-
-    print(_uid);
+    // print(uri);
+    // print(_uid);
     var response = await get(Uri.parse(uri));
     Map<String, dynamic>? extractedData = json.decode(response.body);
     if (extractedData == null) {
@@ -80,6 +79,7 @@ class Items with ChangeNotifier {
         );
       },
     );
+    notifyListeners();
   }
 
 ///////////////////////////////////////////////////////////////////////////
