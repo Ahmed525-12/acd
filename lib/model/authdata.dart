@@ -1,5 +1,6 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth with ChangeNotifier {
   String? uid;
@@ -16,6 +17,20 @@ class Auth with ChangeNotifier {
         .signInWithEmailAndPassword(email: email, password: password);
     uid = user.user!.uid;
     token = await user.user!.getIdToken();
-    print(user.user);
+
+    notifyListeners();
+  }
+
+  void logOut() {
+    uid = null;
+    token = null;
+    notifyListeners();
+  }
+
+  Future<void> getDataFromsPref() async {
+    var sPref = await SharedPreferences.getInstance();
+
+    uid = sPref.getString('uid');
+    token = sPref.getString('token');
   }
 }

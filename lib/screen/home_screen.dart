@@ -9,8 +9,7 @@ class Homescreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: FutureBuilder(
+    return FutureBuilder(
       future: Provider.of<Items>(context, listen: false).getData(),
       builder: (_, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
@@ -26,6 +25,6 @@ class Homescreen extends StatelessWidget {
         }
         return WaitingScreen();
       },
-    ));
+    );
   }
 }

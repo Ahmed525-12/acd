@@ -1,6 +1,5 @@
 import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shoppingcart/util/constans.dart';
 
@@ -52,13 +51,20 @@ class Items with ChangeNotifier {
 
 ///////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
+  ///
+  ///
+
   Future<void> getData() async {
-    String uri = '$url/products.json?auth=$_token';
+    String uri = '$url/products/$_uid.json?auth=$_token';
+    print(uri);
+
+    print(_uid);
     var response = await get(Uri.parse(uri));
     Map<String, dynamic>? extractedData = json.decode(response.body);
     if (extractedData == null) {
-      return null;
+      return;
     }
+
     _items.clear();
     extractedData.forEach(
       (id, data) {
@@ -79,7 +85,7 @@ class Items with ChangeNotifier {
 ///////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
   Future<void> removeItem(String id) async {
-    String uri = '$url/products/$id.json?auth=$_token';
+    String uri = '$url/products/$_uid/$id.json?auth=$_token';
     await delete(Uri.parse(uri));
 
     _items.removeWhere((item) => item.id == id);
@@ -92,7 +98,7 @@ class Items with ChangeNotifier {
     double price,
     String image,
   ) async {
-    String uri = '$url/products.json?auth=$_token';
+    String uri = '$url/products/$_uid.json?auth=$_token';
 //post requset api
     var response = await post(
       Uri.parse(uri),
@@ -125,7 +131,7 @@ class Items with ChangeNotifier {
 
   Future<void> editItem(String id, String title, String description,
       String image, double price) async {
-    String uri = '$url/products/$id.json?auth=$_token';
+    String uri = '$url/products/$_uid/$id.json?auth=$_token';
     await put(
       Uri.parse(uri),
       body: json.encode({

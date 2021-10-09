@@ -26,31 +26,82 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => CartIems(),
+        ChangeNotifierProvider.value(value: Auth()),
+        ChangeNotifierProvider.value(value: CartIems()),
+        // ChangeNotifierProvider.value(value: Products()),
+        // ChangeNotifierProvider.value(value: Orders()),
+        // ChangeNotifierProxyProvider<Auth, Orders>(
+        //   create: (_) => Orders(),
+        //   update: (_, auth, oldOrders) => Orders(
+        //     uid: auth.uid,
+        //     token: auth.token,
+        //     orders: oldOrders?.orders,
+        //   ),
+        // ),
+        ChangeNotifierProxyProvider<Auth, Items>(
+          create: (_) => Items(),
+          update: (_, auth, oldProducts) => Items(
+            uid: auth.uid,
+            token: auth.token,
+            items: oldProducts?.items ?? [],
+          ),
         ),
         ChangeNotifierProxyProvider<Auth, Orders>(
           create: (_) => Orders(),
-          update: (_, auth, orders) => Orders(
-              uid: auth.uid, token: auth.token, orders: orders?.orders ?? []),
-        ),
-        ChangeNotifierProxyProvider<Auth, Items>(
-          create: (_) => Items(),
-          update: (_, auth, items) => Items(
+          update: (_, auth, oldOrders) => Orders(
             uid: auth.uid,
             token: auth.token,
-            items: items?.items ?? [],
+            orders: oldOrders?.orders,
           ),
         ),
-        ChangeNotifierProvider(
-          create: (_) => Auth(),
-        ),
       ],
+      // providers: [
+      //   ChangeNotifierProvider(
+      //     create: (_) => CartIems(),
+      //   ),
+      //   ChangeNotifierProxyProvider<Auth, Orders>(
+      //     create: (_) => Orders(),
+      //     update: (_, auth, orders) => Orders(
+      //         uid: auth.uid, token: auth.token, orders: orders?.orders ?? []),
+      //   ),
+      //   ChangeNotifierProxyProvider<Auth, Items>(
+      //     create: (_) => Items(),
+      //     update: (_, auth, items) => Items(
+      //       uid: auth.uid,
+      //       token: auth.token,
+      //       items: items?.items ?? [],
+      //     ),
+      //   ),
+      //   ChangeNotifierProvider.value(
+      //     value: Auth(),
+      //   ),
+      // ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(primaryColor: Colors.blueAccent),
-        home: AuthScreen(),
+
+        home: Consumer<Auth>(
+          builder: (_, auth, child) => FutureBuilder(
+            future: auth.getDataFromsPref(),
+            builder: (_, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (auth.token == null) {
+                  return const AuthScreen();
+                } else {
+                  return const TapScreen();
+                }
+              }
+              return const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            },
+          ),
+        ),
+        // AuthScreen(),
+
         routes: {
           'tabscreen': (_) => TapScreen(),
           'ManageProduct.routeName': (_) => ManageProduct(),

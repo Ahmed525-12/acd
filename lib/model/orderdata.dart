@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shoppingcart/model/cartdata.dart';
 import 'package:shoppingcart/util/constans.dart';
@@ -36,8 +36,12 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> getData() async {
-    String uri = '$url/orders.json';
+    String uri = '$url/orders/$_uid.json?auth=$_token';
+    print(uri);
+    print(_token);
+    print(_uid);
     var response = await get(Uri.parse(uri));
+
     Map<String, dynamic>? extractedData = json.decode(response.body);
     if (extractedData == null) {
       return;
@@ -48,7 +52,7 @@ class Orders with ChangeNotifier {
       _orders.add(
         Order(
           id: id,
-          totalprice: data['totalprice'],
+          totalprice: double.parse(data['totalprice']),
           prods: (data['prods'] as List<dynamic>)
               .map(
                 (prod) => CartItem(
@@ -71,7 +75,7 @@ class Orders with ChangeNotifier {
     if (prods.isEmpty) {
       return;
     }
-    String uri = '$url/orders.json';
+    String uri = '$url/orders/$_uid.json?auth=$_token';
     var response = await post(
       Uri.parse(uri),
       body: json.encode(
@@ -94,7 +98,7 @@ class Orders with ChangeNotifier {
     );
     _orders.add(
       Order(
-        id: json.decode(response.body)['name'],
+        id: json.decode(response.body)['name'] ?? "",
         totalprice: totalprice,
         prods: prods,
         dateTime: DateTime.now(),
